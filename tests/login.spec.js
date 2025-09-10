@@ -1,5 +1,4 @@
 import { test, expect } from "@playwright/test";
-import { CLIENT_RENEG_LIMIT } from "tls";
 
 //UI TESTING
 // Verifying all login-related elements and fields are present on the login page.
