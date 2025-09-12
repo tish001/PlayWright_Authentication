@@ -109,3 +109,38 @@ test("TestValidCountrySelectionFromDropDown", async ({ page }) => {
 
   console.log("Country successfully selected and verified!");
 });
+test("TestRegistrationWithoutCountry", async ({ page }) => {
+  await page.goto("https://practice.qabrains.com/registration");
+  await page.waitForTimeout(3000);
+  await page.click("//button[@type='submit']");
+  const errMsg = await page.locator(
+    "//p[normalize-space()='Country is a required field']"
+  );
+  expect(errMsg).toHaveText("Country is a required field");
+});
+
+// test("VerifyDropdownOptionsExistAndAlphabeticalOrder", async ({ page }) => {
+//   await page.goto("https://practice.qabrains.com/registration");
+
+//   const dropdown = page.locator("#country");
+
+//   // Step 1: Get all option texts
+//   const options = await dropdown.locator("option").allTextContents();
+
+//   // Step 2: Remove placeholder and trim whitespace
+//   const optionTexts = options
+//     .map((o) => o.trim())
+//     .filter((o) => o && o.toLowerCase() !== "select country");
+
+//   console.log("Dropdown Options:", optionTexts);
+
+//   // Step 3: Sort alphabetically (case-insensitive)
+//   const sortedOptions = [...optionTexts].sort((a, b) =>
+//     a.localeCompare(b, "en", { sensitivity: "base" })
+//   );
+
+//   // Step 4: Assert the order
+//   await expect(optionTexts).tonotEqual(sortedOptions);
+
+//   console.log("✅ Dropdown options are in correct alphabetical order.");
+// });
