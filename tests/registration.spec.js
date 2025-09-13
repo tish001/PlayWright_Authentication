@@ -163,28 +163,8 @@ test("TestValidAccountSelectionFromDropDown", async ({ page }) => {
 
   console.log("Account successfully selected and verified!");
 });
-test("TestRegistrationWithoutAccountType", async ({ page }) => {
-  await page.goto("https://practice.qabrains.com/registration");
-  await page.waitForTimeout(3000);
-  await page.click("//button[@type='submit']");
-  const errMsg = await page.locator(
-    "//p[normalize-space()='Account is a required field']"
-  );
-  expect(errMsg).toHaveText("Account is a required field");
-});
-// test("VerifyInvalidSelectionisNotPossible", async ({ page }) => {
-//   await page.goto("https://practice.qabrains.com/registration");
-//   const dropdown = page.locator("//select[@id='account']");
 
-//   // Try to select a value that doesn't exist
-//   await dropdown.selectOption({ label: "Doctor" });
-//   await page.waitForTimeout(3000);
 
-//   // Verify dropdown value is still the default (empty placeholder)
-//   await expect(dropdown).toHaveValue("");
-// });
-
-//test case for email
 
 test("TestRegistrationWithValidEmail", async ({ page }) => {
   await page.goto("https://practice.qabrains.com/registration");
@@ -226,9 +206,6 @@ test("TestRegistrationWithInvalidEmail", async ({ page }) => {
     "Please include an '@' in the email address"
   );
 });
-// test("TestRegistrationWithDuplicateEmail", async ({ page }) => {
-
-// });
 //test cases for password
 test("TestRegistrationWithValidPassword", async ({ page }) => {
   await page.goto("https://practice.qabrains.com/registration");

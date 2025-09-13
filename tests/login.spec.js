@@ -19,11 +19,11 @@ test("VerifyLoginPageUIElements", async ({ page }) => {
   //  console.log(await loginTitle.textContent());
   const email = page.locator("//label[@for='email']");
   await expect(email).toBeVisible();
-  console.log(await email.textContent());
+  // console.log(await email.textContent());
 
   const password = page.locator("//label[@for='password']");
   await expect(password).toBeVisible();
-  console.log(await password.textContent());
+  // console.log(await password.textContent());
 });
 test("VerifySubmitBtnWithENterPress", async ({ page }) => {
   await page.goto("https://practice.qabrains.com/");
