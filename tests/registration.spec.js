@@ -144,3 +144,258 @@ test("TestRegistrationWithoutCountry", async ({ page }) => {
 
 //   console.log("✅ Dropdown options are in correct alphabetical order.");
 // });
+//testcases for Account Type
+test("TestValidAccountSelectionFromDropDown", async ({ page }) => {
+  await page.goto("https://practice.qabrains.com/registration");
+  await page.waitForTimeout(3000);
+
+  const AccountDropdown = page.locator("//select[@id='account']");
+
+  // Select Bangladesh
+  await AccountDropdown.selectOption({ label: "Private Job" });
+  await page.waitForTimeout(1000);
+
+  // Check the visible selected option text
+  const selectedText = await AccountDropdown.locator(
+    "option:checked"
+  ).textContent();
+  expect(selectedText).toBe("Private Job");
+
+  console.log("Account successfully selected and verified!");
+});
+test("TestRegistrationWithoutAccountType", async ({ page }) => {
+  await page.goto("https://practice.qabrains.com/registration");
+  await page.waitForTimeout(3000);
+  await page.click("//button[@type='submit']");
+  const errMsg = await page.locator(
+    "//p[normalize-space()='Account is a required field']"
+  );
+  expect(errMsg).toHaveText("Account is a required field");
+});
+// test("VerifyInvalidSelectionisNotPossible", async ({ page }) => {
+//   await page.goto("https://practice.qabrains.com/registration");
+//   const dropdown = page.locator("//select[@id='account']");
+
+//   // Try to select a value that doesn't exist
+//   await dropdown.selectOption({ label: "Doctor" });
+//   await page.waitForTimeout(3000);
+
+//   // Verify dropdown value is still the default (empty placeholder)
+//   await expect(dropdown).toHaveValue("");
+// });
+
+//test case for email
+
+test("TestRegistrationWithValidEmail", async ({ page }) => {
+  await page.goto("https://practice.qabrains.com/registration");
+  await page.waitForTimeout(3000);
+  await page.fill("//input[@id='email']", "tahminatisha001@gmail.com");
+  const email = page.locator("//input[@id='email']");
+  await expect(email).toHaveValue("tahminatisha001@gmail.com");
+  await page.waitForTimeout(3000);
+});
+test("TestRegistrationWithoutEmail", async ({ page }) => {
+  await page.goto("https://practice.qabrains.com/registration");
+  await page.waitForTimeout(3000);
+  await page.click("//button[@type='submit']");
+  const errMsg = await page.locator(
+    "//p[normalize-space()='Email is a required field']"
+  );
+  expect(errMsg).toHaveText("Email is a required field");
+});
+test("TestRegistrationWithInvalidEmail", async ({ page }) => {
+  await page.goto("https://practice.qabrains.com/registration");
+
+  const emailInput = page.locator("//input[@id='email']");
+  await page.waitForTimeout(3000);
+
+  // Fill with invalid email
+  await emailInput.fill("tahminaTisha");
+  await page.click("button[type='submit']");
+  await page.waitForTimeout(3000);
+
+  // Get the validation message (browser built-in)
+  const validationMessage = await emailInput.evaluate(
+    (el) => el.validationMessage
+  );
+
+  console.log("Validation message:", validationMessage);
+
+  // Assert it contains '@' error
+  expect(validationMessage).toContain(
+    "Please include an '@' in the email address"
+  );
+});
+// test("TestRegistrationWithDuplicateEmail", async ({ page }) => {
+
+// });
+//test cases for password
+test("TestRegistrationWithValidPassword", async ({ page }) => {
+  await page.goto("https://practice.qabrains.com/registration");
+  await page.waitForTimeout(3000);
+  const passwordField = page.locator("//input[@id='password']");
+  await passwordField.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(3000);
+  await page.fill("//input[@id='password']", "Admin123@");
+  const email = page.locator("//input[@id='password']");
+  await expect(email).toHaveValue("Admin123@");
+  await page.waitForTimeout(3000);
+});
+test("TestRegistrationWithoutPassword", async ({ page }) => {
+  await page.goto("https://practice.qabrains.com/registration");
+  await page.waitForTimeout(3000);
+  await page.click("//button[@type='submit']");
+  const errMsg = page.locator(
+    "//p[normalize-space()='Password is a required field']"
+  );
+  expect(errMsg).toHaveText("Password is a required field");
+});
+
+test("TestPasswordMinLength", async ({ page }) => {
+  await page.goto("https://practice.qabrains.com/registration");
+
+  const passwordField = page.locator("//input[@id='password']");
+  await passwordField.fill("ABC");
+
+  await page.click("//button[@type='submit']");
+
+  const errorMsg = page.locator(
+    "//p[normalize-space()='Password must be at least 6 characters']"
+  );
+  await expect(errorMsg).toHaveText("Password must be at least 6 characters");
+  console.log(" password min length validation works correctly.");
+});
+test("TestPasswordMaxLength", async ({ page }) => {
+  await page.goto("https://practice.qabrains.com/registration");
+
+  const passwordField = page.locator("//input[@id='password']");
+  await passwordField.fill("A1b2C3d4E5f6G7h8I9j0K1l2M3");
+
+  await page.click("//button[@type='submit']");
+
+  const errorMsg = page.locator(
+    "//p[normalize-space()='Password must be at most 25 characters']"
+  );
+  await expect(errorMsg).toHaveText("Password must be at most 25 characters");
+  console.log("Password max length validation works correctly.");
+});
+test("testPasswordtWithWhiteSpaces", async ({ page }) => {
+  await page.goto("https://practice.qabrains.com/registration");
+  await page.waitForTimeout(3000);
+
+  const passwordInput = page.locator("//input[@id='password']");
+
+  await passwordInput.fill("        ");
+  await page.waitForTimeout(3000);
+  await page.click("//button[@type='submit']");
+  const value = await passwordInput.inputValue();
+  console.log("value:", value);
+  expect(value).toBe("        "); // confirms bug: site didn’t trim
+  const isValid = await passwordInput.evaluate((el) => el.checkValidity());
+  expect(isValid).toBe(true); // confirms bug: whitespace treated as valid
+
+  console.warn("BUG: password field accepts whitespace only without error!");
+});
+
+test("TestEyeIconForPasswordConfirm", async ({ page }) => {
+  await page.goto("https://practice.qabrains.com/registration");
+  await page.waitForTimeout(2000);
+
+  const passwordField = page.locator("//input[@id='password']");
+  const eyeIcon = page.locator(
+    "//div[5]//div[1]//button[1]//*[name()='svg']//*[name()='path' and contains(@d,'m9 18 .722')]"
+  );
+
+  await passwordField.fill("Admin123@");
+  await expect(passwordField).toHaveValue("Admin123@");
+
+  expect(await passwordField.getAttribute("type")).toBe("password");
+  await eyeIcon.click();
+  await expect(passwordField).toHaveAttribute("type", "text");
+  await page.waitForTimeout(2000);
+  // await eyeIcon.click();
+  // await expect(passwordField).toHaveAttribute("type", "password");
+
+  console.log("Eye icon correctly toggles password visibility.");
+});
+
+test("TestConfirmPasswordFieldValidation", async ({ page }) => {
+  await page.goto("https://practice.qabrains.com/registration");
+
+  const passwordField = page.locator("//input[@id='password']");
+  const confirmPasswordField = page.locator("//input[@id='confirm_password']");
+  const submitButton = page.locator("//button[@type='submit']");
+
+  // Fill password
+  await passwordField.fill("Admin123@");
+  await expect(passwordField).toHaveValue("Admin123@");
+
+  // Fill confirm password incorrectly
+  await confirmPasswordField.fill("Admin123");
+  await expect(confirmPasswordField).toHaveValue("Admin123");
+
+  // Click submit and verify validation error for mismatch
+  await submitButton.click();
+  const errMsg = page.locator("//p[normalize-space()='Passwords must match']");
+  await expect(errMsg).toHaveText("Passwords must match");
+});
+
+test("SuccessfulRegistrationwithValidCredentials", async ({ page }) => {
+  await page.goto("https://practice.qabrains.com/registration");
+  await page.waitForTimeout(3000);
+  await page.fill("//input[@id='name']", "Tisha");
+  await page.waitForTimeout(3000);
+  const countryDropdown = page.locator("#country");
+
+  await countryDropdown.selectOption({ label: "Bangladesh" });
+  await page.waitForTimeout(1000);
+  const AccountDropdown = page.locator("//select[@id='account']");
+
+  await AccountDropdown.selectOption({ label: "Private Job" });
+  await page.waitForTimeout(1000);
+  await page.fill("//input[@id='email']", "tahminatisha@gmail.com");
+  const passwordField = page.locator("//input[@id='password']");
+  await passwordField.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(3000);
+  await page.fill("//input[@id='password']", "Admin123@");
+  const confirmPasswordField = page.locator("//input[@id='confirm_password']");
+  await confirmPasswordField.fill("Admin123@");
+
+  await page.click("//button[@type='submit']");
+  const successMsg = page.locator("//span[@class='title text-black text-md']");
+  await expect(successMsg).toHaveText("Registration Successful");
+  await page.waitForTimeout(1000);
+});
+
+test("TestDuplicateEmailRegistration", async ({ page }) => {
+  await page.goto("https://practice.qabrains.com/registration");
+  await page.waitForTimeout(2000);
+  await page.fill("//input[@id='name']", "Tisha");
+  await page.waitForTimeout(3000);
+  const countryDropdown = page.locator("#country");
+
+  await countryDropdown.selectOption({ label: "Bangladesh" });
+  await page.waitForTimeout(1000);
+  const accountDropdown = page.locator("//select[@id='account']");
+  await accountDropdown.selectOption({ label: "Private Job" });
+
+  const duplicateEmail = "tahminatisha@gmail.com";
+
+  await page.fill("//input[@id='email']", duplicateEmail);
+  await page.fill("//input[@id='password']", "Admin123@");
+  await page.fill("//input[@id='confirm_password']", "Admin123@");
+
+  await page.click("//button[@type='submit']");
+
+  const successMsg = page.locator("//span[@class='title text-black text-md']");
+  await successMsg.waitFor({ state: "visible" });
+
+  // Get the actual text content
+  const text = await successMsg.textContent();
+
+  if (text === "Registration Successful") {
+    console.log("BUG: System allowed registration with duplicate email!");
+  } else {
+    console.log("Duplicate email correctly blocked.");
+  }
+});
